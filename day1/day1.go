@@ -1,32 +1,13 @@
 package main
 
 import (
-	"bufio"
+	"aoc2024/utils"
 	"fmt"
 	"math"
-	"os"
 	"sort"
 	"strconv"
 	"strings"
 )
-
-func getFileContent() ([]string, error) {
-	file, err := os.Open("day1.txt")
-	if err != nil {
-		return []string{}, err
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-
-	var output []string
-
-	for scanner.Scan() {
-		output = append(output, scanner.Text())
-	}
-
-	return output, nil
-}
 
 func splitStringArrayInLeftAndRightArrays(strArr []string) ([]int, []int, error) {
 	left := []int{}
@@ -78,7 +59,7 @@ func handleNumberValues(leftArr, rightArr []int) int {
 }
 
 func main() {
-	filecontent, err := getFileContent()
+	filecontent, err := utils.GetFileContent("day1.txt")
 	if err != nil {
 		fmt.Println("Error reading file:", err)
 		return
