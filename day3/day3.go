@@ -17,7 +17,7 @@ func main() {
 
 	content := strings.Join(filecontent, "\n")
 
-	pattern := `mul\(\d+,\d+\)|do\(\)|don't\(\)`
+	pattern := `mul\(\d{1,3},\d{1,3\)|do\(\)|don't\(\)`
 	re := regexp.MustCompile(pattern)
 
 	matches := re.FindAllString(content, -1)
