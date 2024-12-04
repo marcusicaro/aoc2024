@@ -8,6 +8,10 @@ import (
 	"strings"
 )
 
+const patternNums = `\d+`
+
+var reNums = regexp.MustCompile(patternNums)
+
 func main() {
 	filecontent, err := utils.GetFileContent("day3.txt")
 	if err != nil {
@@ -22,34 +26,44 @@ func main() {
 
 	matches := re.FindAllString(content, -1)
 
-	patternNums := `\d+`
-	reNums := regexp.MustCompile(patternNums)
+	resultPt1 := getPt1Result(matches)
+	resultPt2 := getPt2Result(matches)
 
+	fmt.Println("pt1: ")
+	fmt.Println(resultPt1)
+	fmt.Println("pt2: ")
+	fmt.Println(resultPt2)
+}
+
+func converToNumbersAndMultiply(result *int, match string) {
+	matchesNums := reNums.FindAllString(match, -1)
+	num1, err1 := strconv.Atoi(matchesNums[0])
+	num2, err2 := strconv.Atoi(matchesNums[1])
+
+	if err1 != nil || err2 != nil {
+		fmt.Println("Error converting string to int")
+	}
+
+	*result += num1 * num2
+}
+
+func getPt1Result(matches []string) int {
 	resultPt1 := 0
-
 	for _, match := range matches {
 		if match == "do()" {
 			continue
 		} else if match == "don't()" {
 			continue
 		}
-
-		matchesNums := reNums.FindAllString(match, -1)
-		num1, err1 := strconv.Atoi(matchesNums[0])
-		num2, err2 := strconv.Atoi(matchesNums[1])
-
-		if err1 != nil || err2 != nil {
-			fmt.Println("Error converting string to int")
-			return
-		}
-
-		resultPt1 += num1 * num2
-
+		converToNumbersAndMultiply(&resultPt1, match)
 	}
 
-	resultPt2 := 0
-	consider := true
+	return resultPt1
+}
 
+func getPt2Result(matches []string) int {
+	consider := true
+	resultPt2 := 0
 	for _, match := range matches {
 		if match == "do()" {
 			consider = true
@@ -61,22 +75,8 @@ func main() {
 		if !consider {
 			continue
 		}
-		matchesNums := reNums.FindAllString(match, -1)
-		num1, err1 := strconv.Atoi(matchesNums[0])
-		num2, err2 := strconv.Atoi(matchesNums[1])
-
-		if err1 != nil || err2 != nil {
-			fmt.Println("Error converting string to int")
-			return
-		}
-
-		resultPt2 += num1 * num2
+		converToNumbersAndMultiply(&resultPt2, match)
 	}
-	fmt.Println("pt1: ")
 
-	fmt.Println(resultPt1)
-
-	fmt.Println("pt2: ")
-
-	fmt.Println(resultPt2)
+	return resultPt2
 }
