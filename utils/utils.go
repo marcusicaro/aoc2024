@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"os"
+	"strings"
 )
 
 func GetFileContent(filename string) ([]string, error) {
@@ -23,9 +24,30 @@ func GetFileContent(filename string) ([]string, error) {
 	return output, nil
 }
 
+func GetFileContentInSingleString(filename string) (string, error) {
+
+	file, err := GetFileContent(filename)
+	if err != nil {
+		return "", err
+	}
+
+	output := strings.Join(file, "\n")
+
+	return output, err
+}
+
 func RemoveElement(slice []int, index int) []int {
 	copySlice := make([]int, len(slice))
 	copy(copySlice, slice)
 	copySlice = append(copySlice[:index], copySlice[index+1:]...)
 	return copySlice
+}
+
+func Contains(slice []int, value int) bool {
+	for _, v := range slice {
+		if v == value {
+			return true
+		}
+	}
+	return false
 }
