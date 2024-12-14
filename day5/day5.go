@@ -2,6 +2,7 @@ package main
 
 import (
 	"aoc2024/utils"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -25,13 +26,10 @@ func handleRules(rules string) map[int][]int {
 		if err != nil {
 			panic(err)
 		}
-		rulesMap[key] = append(rulesMap[key], value)
-
-		for _, v := range rulesMap[key] {
-			if values, ok := rulesMap[v]; ok {
-				rulesMap[key] = append(rulesMap[key], values...)
-			}
+		if !utils.Contains(rulesMap[key], value) {
+			rulesMap[key] = append(rulesMap[key], value)
 		}
+
 	}
 
 	return rulesMap
@@ -67,16 +65,28 @@ func validateNumbersWithRules(rules map[int][]int, numbers []int) bool {
 			}
 		}
 
-		currentArray := numbers[numsArrayKey:]
-
-		for _, currentNumberMandatoryPreviousNumber := range currentNumberMandatoryPreviousNumbers {
-			if !utils.Contains(currentArray, currentNumberMandatoryPreviousNumber) {
+		fromNumberBeyond := numbers[numsArrayKey:]
+		for _, num := range currentNumberMandatoryPreviousNumbers {
+			if utils.Contains(fromNumberBeyond, num) {
 				return false
 			}
 		}
+
 	}
 
 	return true
+}
+
+func solveInvalidSequences(rules map[int][]int, numbers *[]int) {
+	for range *numbers {
+		for numsArrayKey, number := range *numbers {
+			if numsArrayKey+1 < len(*numbers) && utils.Contains(rules[(*numbers)[numsArrayKey+1]], number) {
+				(*numbers)[numsArrayKey+1], (*numbers)[numsArrayKey] = (*numbers)[numsArrayKey], (*numbers)[numsArrayKey+1]
+			}
+
+		}
+	}
+
 }
 
 func main() {
@@ -90,12 +100,32 @@ func main() {
 	rulesMap := handleRules(rules)
 	numbersSequence := convertNumbersStringIntoNumberSequece(numbers)
 	validSequences := [][]int{}
+	invalidSequences := [][]int{}
 
 	for _, numbers := range numbersSequence {
 		if validateNumbersWithRules(rulesMap, numbers) {
 			validSequences = append(validSequences, numbers)
+		} else {
+			invalidSequences = append(invalidSequences, numbers)
 		}
 	}
 
-	println(len(validSequences))
+	result := 0
+	for _, seq := range validSequences {
+		middleIndex := len(seq) / 2
+		result += seq[middleIndex]
+	}
+	// fmt.Print(result)
+
+	for _, seq := range invalidSequences {
+		solveInvalidSequences(rulesMap, &seq)
+	}
+
+	resultPt2 := 0
+	for _, seq := range invalidSequences {
+		middleIndex := len(seq) / 2
+		resultPt2 += seq[middleIndex]
+	}
+	fmt.Print(resultPt2)
+
 }

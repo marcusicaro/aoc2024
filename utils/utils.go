@@ -51,3 +51,12 @@ func Contains(slice []int, value int) bool {
 	}
 	return false
 }
+
+func IndexOf(slice []int, target int) int {
+	for i, v := range slice {
+		if v == target {
+			return i
+		}
+	}
+	return -1
+}
